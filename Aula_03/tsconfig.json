@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "target": "ES2022", //ESNext para pegar a versão mais atual (pode não ser a menos bugada).
+        "outDir": "./dist/js/", // Onde deve ser transcrito/compilado
+        "noEmitOnError": true // O código só atualizará automaticamente o js d dist, caso o TS do src não tenha nenhum erro.
+    },
+    "include": [
+        "./src/**/*" // as pastas onde deve procurar os arquivos TS, neste caso todas as pastas devem ser procuradas (são esses arquivos que serão enviados para a pasta dist).
+    ]
+}
