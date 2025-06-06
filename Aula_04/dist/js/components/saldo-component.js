@@ -1,26 +1,19 @@
-import { formatarData } from "../utils/formaters.js";
 import { formatarMoeda } from "../utils/formaters.js";
-import { FormatoData } from "../types/FormatoData.js";
-let saldo = 3000;
-//Desta forma é acessado a class valor dentro da class salvo-valor.
+import Conta from "./Conta.js";
+//Desta forma é acessado a class valor dentro da class saldo-valor.
 const elementoSaldo = document.querySelector(".saldo-valor .valor");
-if (elementoSaldo != null) {
-    // No TypeScript o textcontent não pode receber um valor que seja diferete de uma string
-    elementoSaldo.textContent = formatarMoeda(saldo);
-    // O elementoSaldo informa que pode ser um elemeno do tipo null, e isso o textcontent não aceita.
-}
-// Irá inserir a data de acesso.
-const elemenoDataAcesso = document.querySelector('.block-saldo time');
-export function getSaldo() {
-    return saldo;
-}
-atualizarSaldo(saldo);
+renderizarSaldo();
 // Essa função não possui nenhum valor de retorno, por isso foi declarada como tipo void
-export function atualizarSaldo(novoSaldo) {
-    saldo = novoSaldo;
-    if (elemenoDataAcesso != null) {
-        const dataAcesso = new Date();
-        // Padroniza o estilo de data que será mostrado
-        elemenoDataAcesso.textContent = formatarData(dataAcesso, FormatoData.DIA_SEMANA_DIA_MES_ANO);
+function renderizarSaldo() {
+    if (elementoSaldo != null) {
+        // No TypeScript o textcontent não pode receber um valor que seja diferete de uma string
+        elementoSaldo.textContent = formatarMoeda(Conta.getSaldo());
+        // O elementoSaldo informa que pode ser um elemeno do tipo null, e isso o textcontent não aceita.
     }
 }
+const SaldoComponent = {
+    atualizar() {
+        renderizarSaldo();
+    }
+};
+export default SaldoComponent;

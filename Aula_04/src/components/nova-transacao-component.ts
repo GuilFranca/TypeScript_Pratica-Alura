@@ -1,6 +1,8 @@
 import { TipoTransacao } from "../types/TipoTransacao.js";
 import { Transacao } from "../types/Transacao.js";
-import { atualizarSaldo, getSaldo } from "./saldo-component.js";
+import Conta from "./Conta.js";
+import DataComponent from "./data-component.js";
+import SaldoComponent from "./saldo-component.js";
 
 const elementoFormulario = document.querySelector(".block-nova-transacao form") as HTMLFormElement;
 elementoFormulario.addEventListener('submit', function (event) {
@@ -21,24 +23,7 @@ elementoFormulario.addEventListener('submit', function (event) {
     // Utiliza a enum TipoTransacao para padronizar a entrada de valores
     let tipoTransacao: TipoTransacao = inputTipoTransacao.value as TipoTransacao;
     let valor: number = inputTipoValor.valueAsNumber;
-    let data: Date = new Date (inputTipoData.value);
-
-    let saldo:number = getSaldo();
-
-    // Padronizaremos os tipo de entrada no TipoTransacao
-    if (tipoTransacao == TipoTransacao.DEPOSITO) {
-        saldo += valor;
-    } else if (tipoTransacao == TipoTransacao.TRANSFERENCIA || tipoTransacao == TipoTransacao.PAGAMENTO_BOLETO) {
-        saldo -= valor;
-    } else {
-        alert('Tipo de transação é inválido!');
-    }
-
-    // Insere o valor novamente após a transação
-    // elementoSaldo.textContent = formatarMoeda(saldo);
-
-    // Função de atualização de saldo
-    atualizarSaldo(saldo);
+    let data: Date = new Date (inputTipoData.value);    
 
     // Objeto que representa a nova transação com o tipo Transacao e uma enum TipoTransacao
     const novaTransacao: Transacao = {
@@ -47,7 +32,8 @@ elementoFormulario.addEventListener('submit', function (event) {
         data: data
     }
 
-    console.log(novaTransacao);
+    Conta.registrarTransacao(novaTransacao);
+    SaldoComponent.atualizar();
 
     // Limpa o formulário quando o anterior for concluído
     elementoFormulario.reset();
