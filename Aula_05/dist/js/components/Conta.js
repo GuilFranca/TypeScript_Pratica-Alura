@@ -60,6 +60,8 @@ const Conta = {
         }
         else if (novaTransacao.tipoTransacao == TipoTransacao.TRANSFERENCIA || novaTransacao.tipoTransacao == TipoTransacao.PAGAMENTO_BOLETO) {
             debitar(novaTransacao.valor);
+            // Para mostrar no extrato saída de dinheiro
+            novaTransacao.valor *= -1;
         }
         else {
             throw new Error('Tipo de transação é inválido!');
@@ -68,6 +70,26 @@ const Conta = {
         console.log(this.getGruposTransacoes());
         // Transforma esta lista em uma stringJSON
         localStorage.setItem('transacoes', JSON.stringify(transacoes));
+    },
+    resumoTransacoes() {
+        const listaTransacoes = structuredClone(transacoes);
+        let totalDeposito = 0;
+        let totalTransferencias = 0;
+        let totalPagamentosBoleto = 0;
+        for (let transacao of listaTransacoes) {
+            if (transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
+                totalDeposito += transacao.valor;
+            }
+            if (transacao.tipoTransacao === TipoTransacao.TRANSFERENCIA) {
+                totalTransferencias += transacao.valor * -1;
+            }
+            if (transacao.tipoTransacao === TipoTransacao.PAGAMENTO_BOLETO) {
+                totalPagamentosBoleto += transacao.valor * -1;
+            }
+        }
+        console.log(`Total valor depositos: ${totalDeposito}`);
+        console.log(`Total valor transferências: ${totalTransferencias}`);
+        console.log(`Total valor pagamento de boletos: ${totalPagamentosBoleto}`);
     }
 };
 // Quando vamos exportar um objeto inteiro é comum exporta-lo como default

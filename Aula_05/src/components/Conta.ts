@@ -1,6 +1,7 @@
 import { Transacao } from "../types/Transacao.js";
 import { TipoTransacao } from "../types/TipoTransacao.js";
 import { GrupoTransacao } from "../types/GrupoTransacao.js";
+import { ResumoTransacoes } from "../types/TotalTransacoes.js";
 
 let saldo: number = JSON.parse(localStorage.getItem('saldo')) || 0;
 
@@ -54,7 +55,7 @@ const Conta = {
         let labelAtualGrupoTransacao: string = '';
 
         for (let transacao of transacoesOrdenadas) {
-            let labelGrupoTransacao: string = transacao.data.toLocaleDateString('pt-br', { month: 'long', year: 'numeric'});
+            let labelGrupoTransacao: string = transacao.data.toLocaleDateString('pt-br', { month: 'long', year: 'numeric' });
             if (labelAtualGrupoTransacao != labelGrupoTransacao) {
                 labelAtualGrupoTransacao = labelGrupoTransacao;
                 gruposTransacoes.push({
@@ -77,6 +78,8 @@ const Conta = {
         }
         else if (novaTransacao.tipoTransacao == TipoTransacao.TRANSFERENCIA || novaTransacao.tipoTransacao == TipoTransacao.PAGAMENTO_BOLETO) {
             debitar(novaTransacao.valor);
+            // Para mostrar no extrato saída de dinheiro
+            novaTransacao.valor *= - 1;
         }
         else {
             throw new Error('Tipo de transação é inválido!');
@@ -86,6 +89,34 @@ const Conta = {
         console.log(this.getGruposTransacoes());
         // Transforma esta lista em uma stringJSON
         localStorage.setItem('transacoes', JSON.stringify(transacoes));
+    },
+
+    resumoTransacoes(): void {
+        const listaTransacoes: Transacao[] = structuredClone(transacoes);
+        let totalDeposito: number = 0;
+        let totalTransferencias: number = 0;
+        let totalPagamentosBoleto: number = 0;
+
+        for (let transacao of listaTransacoes) {
+
+            if (transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
+                totalDeposito += transacao.valor;
+            }
+
+            if (transacao.tipoTransacao === TipoTransacao.TRANSFERENCIA) {
+                totalTransferencias += transacao.valor * -1;
+            }
+
+            if (transacao.tipoTransacao === TipoTransacao.PAGAMENTO_BOLETO) {
+                totalPagamentosBoleto += transacao.valor * -1;
+            }
+
+        }
+
+        console.log(`Total valor depositos: ${totalDeposito}`);
+        console.log(`Total valor transferências: ${totalTransferencias}`);
+        console.log(`Total valor pagamento de boletos: ${totalPagamentosBoleto}`);
+
     }
 
 }

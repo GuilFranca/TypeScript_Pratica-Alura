@@ -1,6 +1,7 @@
 import { TipoTransacao } from "../types/TipoTransacao.js";
 import { Transacao } from "../types/Transacao.js";
 import Conta from "./Conta.js";
+import ExtratroComponent from "./extrato-component.js";
 import SaldoComponent from "./saldo-component.js";
 
 const elementoFormulario = document.querySelector(".block-nova-transacao form") as HTMLFormElement;
@@ -23,7 +24,8 @@ elementoFormulario.addEventListener('submit', function (event) {
         // Utiliza a enum TipoTransacao para padronizar a entrada de valores
         let tipoTransacao: TipoTransacao = inputTipoTransacao.value as TipoTransacao;
         let valor: number = inputTipoValor.valueAsNumber;
-        let data: Date = new Date(inputTipoData.value);
+        // Corrigindo erro de data no extrado que vem sempre um dia a menos (precisamos passar um horário de 00:00 ou mais) precisa de espaço
+        let data: Date = new Date(inputTipoData.value + " 00:00:00");
 
         // Objeto que representa a nova transação com o tipo Transacao e uma enum TipoTransacao
         const novaTransacao: Transacao = {
@@ -34,13 +36,15 @@ elementoFormulario.addEventListener('submit', function (event) {
 
         Conta.registrarTransacao(novaTransacao);
         SaldoComponent.atualizar();
-
+        ExtratroComponent.atualizar();
         // Limpa o formulário quando o anterior for concluído
         elementoFormulario.reset();
+
+        // Total de cada transação
+        Conta.resumoTransacoes();  
     } 
     catch(erro) {
         alert(erro.message);
-    }
-
+    }  
 
 })
